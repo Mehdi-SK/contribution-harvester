@@ -1,21 +1,10 @@
 {
-  "name": "typescript-action",
-  "description": "GitHub Actions TypeScript template",
-  "version": "0.0.0",
+  "name": "contribution-harvester",
+  "description": "A GitHub Action to capture and standardize contributions then send them to a specified endpoint.",
+  "version": "0.0.1",
   "author": "",
   "type": "module",
   "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
-  },
-  "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
-  },
-  "keywords": [
-    "actions"
-  ],
   "exports": {
     ".": "./dist/index.js"
   },
@@ -37,7 +26,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^3.0.0"
+    "@actions/core": "^3.0.0",
+    "@octokit/webhooks": "^14.2.0"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.2",
