@@ -1,8 +1,29 @@
-export interface ContributionPayload {
+interface BasePayload {
   contribution_id: string;
-  developer_identifier: string | null;
+  github_login: string | null;
   repository: string;
-  event_type: string;
   timestamp: string;
-  metadata: Record<string, any>;
 }
+
+export interface PRPayload extends BasePayload {
+  event_type: "pull_request";
+  context: {
+    pr_id: string;
+    pr_url: string;
+    target_branch: string;
+    labels: string[];
+    reviewers: string[];
+    title: string;
+  };
+}
+
+// example for antoher contribution type
+export interface ReleasePayload extends BasePayload {
+  event_type: "release";
+  context: {
+    release_tag: string;
+    release_url: string;
+  };
+}
+
+export type ContributionPayload = PRPayload | ReleasePayload;

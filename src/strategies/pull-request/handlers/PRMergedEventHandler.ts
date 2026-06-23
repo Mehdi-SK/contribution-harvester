@@ -1,12 +1,13 @@
-import { ContributionPayload } from '../../../types/contribution-payload.type.js'
-import { TPullRequestPayload } from '../../../types/payloads/payload.types.js'
-import { PRActionHandler } from '../PREventHandler.js'
+import { PRPayload } from '../../../types/contribution-payload.type.js'
+import { GHPullRequestPayload } from '../../../types/payloads/payload.types.js'
+import { IPRActionHandler } from '../PREventHandler.js'
 
-export class PRMergedEventHandler implements PRActionHandler {
-  canHandle(action: string, payload: TPullRequestPayload): boolean {
+export class PRMergedEventHandler implements IPRActionHandler {
+  canHandle(payload: GHPullRequestPayload): boolean {
     return payload.action === 'closed' && payload.pull_request.merged === true
   }
-  process(payload: TPullRequestPayload): ContributionPayload[] {
-    throw new Error('Method not implemented.')
+  process(payload: GHPullRequestPayload): PRPayload[] {
+    const { pull_request, repository } = payload
+    return []
   }
 }
