@@ -1,5 +1,5 @@
 import { ContributionPayload } from '../../types/contribution-payload.type.js'
-import { TPushEventPayload } from '../../types/payloads/payload.types.js'
+import { GHPushEventPayload } from '../../types/payloads/payload.types.js'
 import { IEventProcessorStrategy } from '../IEventProcessorStrategy.js'
 
 
@@ -7,7 +7,7 @@ export class PushStrategy implements IEventProcessorStrategy {
   canHandle(event: string): boolean {
     return event === 'push'
   }
-  process(payload: TPushEventPayload): ContributionPayload[] | null {
+  process(payload: GHPushEventPayload): ContributionPayload[] | null {
     return payload.commits.map((commit) => {
       return {
         contribution_id: `push-${payload.repository.full_name}-${commit.id}`,
