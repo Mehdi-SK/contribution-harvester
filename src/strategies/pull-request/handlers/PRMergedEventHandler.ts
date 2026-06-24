@@ -1,3 +1,4 @@
+import { logger } from '../../../logger/logger.js'
 import {
   EventTypes,
   PRPayload
@@ -8,7 +9,13 @@ import { getPullRequestReviewers } from '../shared/extract-reviewers.js'
 
 export class PRMergedEventHandler implements IPRActionHandler {
   canHandle(payload: GHPullRequestPayload): boolean {
-    return payload.action === 'closed' && payload.pull_request.merged === true
+    logger.debug(
+      `PRMergedEventHandler.canHandle: ${payload.action} ${payload.pull_request.merged}`
+    )
+    const result =
+      payload.action === 'closed' && payload.pull_request.merged === true
+    logger.debug(`PRMergedEventHandler.canHandle: ${result}`)
+    return result
   }
   async process(payload: GHPullRequestPayload): Promise<PRPayload[]> {
     const { pull_request, repository } = payload

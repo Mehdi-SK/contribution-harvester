@@ -86213,12 +86213,54 @@ class GitHubClient {
     }
 }
 
+const EventTypes = {
+    PULL_REQUEST: 'pull_request'};
+
+async function getPullRequestReviewers(owner_login, repo_name, pr_number) {
+    const reviews = await GitHubClient.getPRReviews(owner_login, repo_name, pr_number);
+    return reviews.filter((r) => r.state !== 'COMMENTED');
+}
+
+class PRMergedEventHandler {
+    canHandle(payload) {
+        logger.debug(`PRMergedEventHandler.canHandle: ${payload.action} ${payload.pull_request.merged}`);
+        const result = payload.action === 'closed' && payload.pull_request.merged === true;
+        logger.debug(`PRMergedEventHandler.canHandle: ${result}`);
+        return result;
+    }
+    async process(payload) {
+        const { pull_request, repository } = payload;
+        const reviews = await getPullRequestReviewers(repository.owner.login, repository.name, pull_request.number);
+        if (!pull_request.user) {
+            throw new Error('Pull request user is null');
+        }
+        const outputPayload = {
+            contribution_id: `pull_request-merged-${repository.owner.login}-${repository.name}-${pull_request.number}`,
+            github_login: pull_request.user.login,
+            context: {
+                pr_id: pull_request.id.toString(),
+                pr_url: pull_request.html_url,
+                labels: pull_request.labels.map((label) => label.name),
+                reviewers: reviews,
+                target_branch: pull_request.base.ref,
+                title: pull_request.title
+            },
+            timestamp: pull_request.merged_at ?? new Date().toISOString(),
+            repository: repository.full_name,
+            event_type: EventTypes.PULL_REQUEST
+        };
+        return [outputPayload];
+    }
+}
+
 class PRStrategy {
-    handlers = [];
+    handlers = [new PRMergedEventHandler()];
     canHandle(event) {
+        logger.debug(`Checking if event type: ${event} can be handled`);
         return event === 'pull_request';
     }
     async process(payload) {
+        logger.debug(`Processing PR payload`);
         const handler = this.handlers.find((h) => h.canHandle(payload));
         return handler ? await handler.process(payload) : null;
     }
