@@ -86218,7 +86218,10 @@ const EventTypes = {
 
 async function getPullRequestReviewers(owner_login, repo_name, pr_number) {
     const reviews = await GitHubClient.getPRReviews(owner_login, repo_name, pr_number);
-    return reviews.filter((r) => r.state !== 'COMMENTED');
+    return reviews.filter((r) => {
+        logger.debug(`Reviewer: ${JSON.stringify(r)} for PR ${pr_number} in ${owner_login}/${repo_name}`);
+        return r.state !== 'COMMENTED';
+    });
 }
 
 class PRMergedEventHandler {

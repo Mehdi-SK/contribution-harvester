@@ -1,4 +1,5 @@
 import { GitHubClient } from '../../../client/github/github-client.js'
+import { logger } from '../../../logger/logger.js'
 import { TReview } from '../../../types/contribution-payload.type.js'
 
 export async function getPullRequestReviewers(
@@ -12,5 +13,10 @@ export async function getPullRequestReviewers(
     pr_number
   )
 
-  return reviews.filter((r) => r.state !== 'COMMENTED')
+  return reviews.filter((r) => {
+    logger.debug(
+      `Reviewer: ${JSON.stringify(r)} for PR ${pr_number} in ${owner_login}/${repo_name}`
+    )
+    return r.state !== 'COMMENTED'
+  })
 }
