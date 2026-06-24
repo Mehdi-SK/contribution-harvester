@@ -86238,7 +86238,8 @@ async function run() {
     const payload = githubExports.context.payload;
     const processor = processors.find((p) => p.canHandle(event));
     const trackedEvents = processor ? await processor.process(payload) : null;
-    console.log(JSON.stringify(trackedEvents, null, 2));
+    logger.info('Output:');
+    logger.info(JSON.stringify(trackedEvents, null, 2));
 }
 
 /**

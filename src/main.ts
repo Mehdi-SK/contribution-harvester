@@ -2,6 +2,7 @@ import { GitHubClient } from './client/github/github-client.js'
 import { processors } from './strategies/index.js'
 import * as github from '@actions/github'
 import * as core from '@actions/core'
+import { logger } from './logger/logger.js'
 
 async function initializeClients(): Promise<void> {
   GitHubClient.initialize(core.getInput('github-token', { required: true }))
@@ -16,5 +17,6 @@ export async function run(): Promise<void> {
   const processor = processors.find((p) => p.canHandle(event))
   const trackedEvents = processor ? await processor.process(payload) : null
 
-  console.log(JSON.stringify(trackedEvents, null, 2))
+  logger.info('Output:')
+  logger.info(JSON.stringify(trackedEvents, null, 2))
 }
