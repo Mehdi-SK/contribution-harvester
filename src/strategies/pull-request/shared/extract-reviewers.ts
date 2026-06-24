@@ -1,15 +1,16 @@
 import { GitHubClient } from '../../../client/github/github-client.js'
-import { ContributionPayload } from '../../../types/contribution-payload.type.js'
-import { GHPullRequestPayload } from '../../../types/payloads/payload.types.js'
+import { TReview } from '../../../types/contribution-payload.type.js'
 
-export async function extractReviewers(
-  payload: GHPullRequestPayload
-): Promise<ContributionPayload[]> {
+export async function getPullRequestReviewers(
+  owner_login: string,
+  repo_name: string,
+  pr_number: number
+): Promise<TReview[]> {
   const reviews = await GitHubClient.getPRReviews(
-    payload.repository.owner.login,
-    payload.repository.name,
-    payload.pull_request.number
+    owner_login,
+    repo_name,
+    pr_number
   )
 
-  reviews.filter
+  return reviews.filter((r) => r.state !== 'COMMENTED')
 }
