@@ -1,9 +1,10 @@
 import { GitHubClient } from './client/github/github-client.js'
 import { processors } from './strategies/index.js'
 import * as github from '@actions/github'
+import * as core from '@actions/core'
 
 async function initializeClients(): Promise<void> {
-  GitHubClient.initialize(process.env.GITHUB_TOKEN || '')
+  GitHubClient.initialize(core.getInput('github-token', { required: true }))
 }
 
 export async function run(): Promise<void> {
