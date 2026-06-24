@@ -84113,6 +84113,25 @@ var ExitCode;
      */
     ExitCode[ExitCode["Failure"] = 1] = "Failure";
 })(ExitCode || (ExitCode = {}));
+/**
+ * Gets the value of an input.
+ * Unless trimWhitespace is set to false in InputOptions, the value is also trimmed.
+ * Returns an empty string if the value is not defined.
+ *
+ * @param     name     name of the input to get
+ * @param     options  optional. See InputOptions.
+ * @returns   string
+ */
+function getInput(name, options) {
+    const val = process.env[`INPUT_${name.replace(/ /g, '_').toUpperCase()}`] || '';
+    if (options && options.required && !val) {
+        throw new Error(`Input required and not supplied: ${name}`);
+    }
+    if (options && options.trimWhitespace === false) {
+        return val;
+    }
+    return val.trim();
+}
 //-----------------------------------------------------------------------
 // Results
 //-----------------------------------------------------------------------
@@ -86211,14 +86230,14 @@ const processors = [
 ];
 
 async function initializeClients() {
-    GitHubClient.initialize(process.env.GITHUB_TOKEN || '');
+    GitHubClient.initialize(getInput('github-token', { required: true }));
 }
 async function run() {
     await initializeClients();
     const event = githubExports.context.eventName;
     const payload = githubExports.context.payload;
     const processor = processors.find((p) => p.canHandle(event));
-    const trackedEvents = processor ? processor.process(payload) : null;
+    const trackedEvents = processor ? await processor.process(payload) : null;
     console.log(JSON.stringify(trackedEvents, null, 2));
 }
 
