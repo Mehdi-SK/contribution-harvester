@@ -1,6 +1,14 @@
+import { GitHubClient } from './client/github/github-client.js'
 import { processors } from './strategies/index.js'
 import * as github from '@actions/github'
+
+async function initializeClients(): Promise<void> {
+  GitHubClient.initialize(process.env.GITHUB_TOKEN || '')
+}
+
 export async function run(): Promise<void> {
+  await initializeClients()
+
   const event = github.context.eventName
   const payload = github.context.payload
 

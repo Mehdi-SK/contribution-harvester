@@ -1,10 +1,6 @@
 import * as github from '@actions/github'
 import { logger } from '../../logger/logger.js'
-type TReview = {
-  username: string
-  state: string
-  submitted_at: string
-}
+import { TReview } from '../../types/contribution-payload.type.js'
 
 export class GitHubClient {
   private static octokit: ReturnType<typeof github.getOctokit>

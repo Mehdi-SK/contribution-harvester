@@ -9,10 +9,10 @@ export class PRStrategy implements IEventProcessorStrategy {
   canHandle(event: string): boolean {
     return event === 'pull_request'
   }
-  process(payload: GHPullRequestPayload): TContributionPayload[] | null {
-    const handler = this.handlers.find((h) =>
-      h.canHandle(payload)
-    )
-    return handler ? handler.process(payload) : null
+  async process(
+    payload: GHPullRequestPayload
+  ): Promise<TContributionPayload[] | null> {
+    const handler = this.handlers.find((h) => h.canHandle(payload))
+    return handler ? await handler.process(payload) : null
   }
 }
