@@ -14,7 +14,7 @@ export async function run(): Promise<void> {
   const payload = github.context.payload
 
   const processor = processors.find((p) => p.canHandle(event))
-  const trackedEvents = processor ? processor.process(payload) : null
+  const trackedEvents = processor ? await processor.process(payload) : null
 
   console.log(JSON.stringify(trackedEvents, null, 2))
 }
